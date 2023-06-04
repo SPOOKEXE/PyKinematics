@@ -11,3 +11,6 @@ Coding Challenge #64.2: Inverse Kinematics
 
 Klampt Python API for Kinematics
 - https://motion.cs.illinois.edu/software/klampt/latest/pyklampt_docs/Manual-IK.html
+
+# IKPy - Inverse Kinematics library
+https://github.com/Phylliade/ikpy

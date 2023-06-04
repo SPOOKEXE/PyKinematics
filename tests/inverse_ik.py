@@ -10,60 +10,39 @@ FILE_DIRECTORY = os_path.dirname(os_path.realpath(__file__))
 sys_path.append( os_path.join(FILE_DIRECTORY, "..") )
 
 from src.fmath.Vector2 import Vector2
-from src.objects.Segment2D import Segment2D
+from src.objects.Segment2D import Segment2D, Tentacle2D
 
 sys_path.pop()
 
 def run_2d_test():
 
 	WIDGET_SIZE = (800, 800)
-	TOTAL_SEGMENTS = 80
-	SEGMENT_LENGTH = 8
 
-	segments : list[Segment2D] = []
-	baseVector = Vector2( WIDGET_SIZE[0] / 2, WIDGET_SIZE[1] )
-
-	baseSegment = Segment2D(0, 0, SEGMENT_LENGTH, 1)
-	for _ in range(TOTAL_SEGMENTS):
-		seg_next = Segment2D(baseSegment.b.x, baseSegment.b.y, SEGMENT_LENGTH, 1)
-		seg_next.parent = baseSegment
-		baseSegment.child = seg_next
-		segments.append(seg_next)
-		baseSegment = seg_next
+	segment_colors = ["red", "blue", "orange", "white"]
+	tentacle = Tentacle2D(3, [200, 150, 100])
+	tentacle.BASE_VECTOR = Vector2( WIDGET_SIZE[0] / 2, WIDGET_SIZE[1] )
 
 	def pre_update(self : DrawApp):
-		nonlocal baseSegment, baseVector
+		nonlocal tentacle
 		mx, my = self.get_mouse_xy()
-
-		length = len(segments)
-		endd = segments[length-1]
-		endd.follow_target(mx, my)
-		endd.update()
-		for i in range(length-2, -1, -1):
-			segments[i].follow_segment(segments[i+1])
-			segments[i].update()
-
-		segments[0].setA(baseVector)
-		segments[0].calculate_b()
-		for i in range(1, length, 1):
-			segments[i].setA( segments[i-1].b )
-			segments[i].calculate_b()
+		tentacle.follow(mx, my)
 
 	def post_update(self : DrawApp):
 		pass
 
 	def pre_draw(self : DrawApp):
-		nonlocal baseSegment
+		nonlocal tentacle
 		self.clear_screen()
 
-		c, color = 0, ["red", "blue", "orange", "white"]
-		next_seg = baseSegment
-		while next_seg != None:
-			c += 1
-			weight = max(8 - floor((c * 12) / TOTAL_SEGMENTS), 2)
-			col = color[c%len(color)]
-			self.draw_line(next_seg.a.x, next_seg.a.y, next_seg.b.x, next_seg.b.y, fill=col, width= weight)
-			next_seg = next_seg.parent
+		length = len(tentacle.SEGMENTS)
+		for index in range(length):
+			segment = tentacle.SEGMENTS[index]
+			self.draw_line(
+				segment.a.x, segment.a.y,
+				segment.b.x, segment.b.y,
+				fill=segment_colors[index%len(segment_colors)],
+				width=max(8 - floor((index * 12) / length), 2)
+			)
 
 	def post_draw(self : DrawApp):
 		pass
