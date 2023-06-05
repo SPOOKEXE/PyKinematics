@@ -75,9 +75,11 @@ class Tentacle2D:
 		for seg in self.SEGMENTS:
 			seg.update()
 
-	def lerp_to_angles(self, angles : list, alpha : float) -> None:
-		for index, seg in enumerate(self.SEGMENTS):
-			seg.angle = Lerp.lerp_n( seg.angle, angles[index], alpha ) 
+	def shift_segments(self):
+		self.SEGMENTS[0].calculate_b()
+		for i in range(1, len(self.SEGMENTS), 1):
+			self.SEGMENTS[i].setA( self.SEGMENTS[i-1].b )
+			self.SEGMENTS[i].calculate_b()
 
 	def follow(self, tx : float, ty : float):
 		length = len(self.SEGMENTS)
@@ -93,10 +95,7 @@ class Tentacle2D:
 			return
 
 		self.SEGMENTS[0].setA(self.BASE_VECTOR)
-		self.SEGMENTS[0].calculate_b()
-		for i in range(1, length, 1):
-			self.SEGMENTS[i].setA( self.SEGMENTS[i-1].b )
-			self.SEGMENTS[i].calculate_b()
+		self.shift_segments()
 
 	def __init__(self, total_segments : int, segment_length : Union[int, list]):
 		self.TOTAL_SEGMENTS = total_segments
