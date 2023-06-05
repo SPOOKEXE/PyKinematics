@@ -63,6 +63,22 @@ class Tentacle2D:
 	TOTAL_SEGMENTS = 0
 	BASE_VECTOR = None
 
+	def get_angles(self) -> list:
+		coords = []
+		for seg in self.SEGMENTS:
+			coords.append( seg.angle )
+		return coords
+
+	def set_angles(self, angles : list) -> list:
+		for index, seg in enumerate(self.SEGMENTS):
+			seg.angle = angles[index]
+		for seg in self.SEGMENTS:
+			seg.update()
+
+	def lerp_to_angles(self, angles : list, alpha : float) -> None:
+		for index, seg in enumerate(self.SEGMENTS):
+			seg.angle = Lerp.lerp_n( seg.angle, angles[index], alpha ) 
+
 	def follow(self, tx : float, ty : float):
 		length = len(self.SEGMENTS)
 		endd = self.SEGMENTS[length-1]

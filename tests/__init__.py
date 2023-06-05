@@ -18,7 +18,7 @@ def run_2d_test():
 	WIDGET_SIZE = (800, 800)
 
 	TOTAL_SEGMENTS = 3
-	SEGMENT_LENGTHS = [150, 100, 50]
+	SEGMENT_LENGTHS = [200, 200, 150]
 
 	#segment_colors = ['white']
 	segment_colors = ["red", "blue", "orange", "white"]
@@ -38,7 +38,6 @@ def run_2d_test():
 	def pre_draw(self : DrawApp):
 		nonlocal tentacle
 		self.clear_screen()
-
 		length = len(tentacle.SEGMENTS)
 		for index in range(length):
 			segment = tentacle.SEGMENTS[index]
@@ -52,7 +51,13 @@ def run_2d_test():
 	def post_draw(self : DrawApp):
 		pass
 
-	run_draw_widget(PRE_UPDATE=pre_update, POST_UPDATE=post_update, PRE_DRAW=pre_draw, POST_DRAW=post_draw, WIDGET_SIZE=WIDGET_SIZE)
+	app = run_draw_widget(WIDGET_SIZE=WIDGET_SIZE)
+	app.set_update_methods(
+		pre_update=pre_update,
+		post_update=post_update,
+		pre_draw=pre_draw,
+		post_draw=post_draw
+	)
 
 if __name__ == '__main__':
 	run_2d_test()
