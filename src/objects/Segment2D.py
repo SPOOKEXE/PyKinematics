@@ -24,7 +24,6 @@ class Segment2D:
 
 	parent = None
 	child = None
-	anchored = False
 
 	def calculate_b(self):
 		dx = self.length * cos(self.angle)
@@ -35,9 +34,6 @@ class Segment2D:
 	def setA(self, position : Vector2):
 		self.a.set( position.x, position.y )
 
-	def follow_segment(self, segment):
-		self.follow_target( segment.a.x, segment.a.y )
-
 	def follow_target(self, tx : float, ty : float):
 		_dir = Vector2( tx - self.a.x, ty - self.a.y )
 		_angle = _dir.heading()
@@ -46,6 +42,9 @@ class Segment2D:
 		_dir.setMag(-self.length)
 		self.a = Vector2( tx + _dir.x, ty + _dir.y )
 		return self
+
+	def follow_segment(self, segment):
+		self.follow_target( segment.a.x, segment.a.y )
 
 	def update(self):
 		self.calculate_b()
@@ -101,20 +100,15 @@ class Tentacle2D:
 		self.TOTAL_SEGMENTS = total_segments
 		self.SEGMENTS : list[Segment2D] = []
 
+		if type(segment_length) == int:
+			segment_length = [segment_length]
+
 		# generate all the segments
 		if type(segment_length) == list:
 			length = len(segment_length)
 			baseSegment = Segment2D(0, 0, segment_length[0], 1)
 			for idx in range(total_segments):
 				seg_next = Segment2D(baseSegment.b.x, baseSegment.b.y, segment_length[ min(idx, length)-1 ], 1)
-				seg_next.parent = baseSegment
-				baseSegment.child = seg_next
-				self.SEGMENTS.insert(-1, seg_next)
-				baseSegment = seg_next
-		elif type(segment_length) == int:
-			baseSegment = Segment2D(0, 0, segment_length, 1)
-			for _ in range(total_segments):
-				seg_next = Segment2D(baseSegment.b.x, baseSegment.b.y, segment_length, 1)
 				seg_next.parent = baseSegment
 				baseSegment.child = seg_next
 				self.SEGMENTS.insert(-1, seg_next)
